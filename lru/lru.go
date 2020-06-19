@@ -12,9 +12,9 @@ type Cache struct {
 	onEvicted func(key string, value Value)
 }
 
-//ele是指链表中的元素
-//kv是链表中的元素(Element.Value)经类型断言转化后的item类型
-//而item又实现了Value接口(必须要实现Len()函数)
+//ele是指链表中的元素，在本程序中ele.Value的类型是*item
+//kv是链表中的元素(Element.Value)经类型断言转化后的item类型（的指针）
+//而item又实现了自定义的Value接口(必须要实现Len()函数)
 
 //list所有的单元素插入函数（push）都会返回当前插入到表中后存在于表中的Element
 
@@ -46,7 +46,6 @@ func (c *Cache)Add(key string,value Value)  {
 	ele,ok := c.cache[key]
 	if ok{
 		c.lruList.MoveToFront(ele)
-
 		kv:=ele.Value.(*item)
 		c.usedBytes=c.usedBytes-int64(kv.value.Len())+int64(value.Len())
 		kv.value=value
@@ -56,10 +55,12 @@ func (c *Cache)Add(key string,value Value)  {
 		c.usedBytes=c.usedBytes+int64(value.Len()+len(key))
 	}
 
+	//不在之前检查空间溢出是因为本缓存设计目的是要永远保证当前一个元素的可用
+	//所以现在添加/更改的元素不考虑是否溢出，只在添加/修改结束后再对缓存进行清理
 	for  c.maxBytes != 0 && c.usedBytes>c.maxBytes{
 		c.Eliminate()
 	}
-	
+
 }
 
 //从缓存中获取key对应的value
@@ -78,6 +79,7 @@ func (c *Cache)Get(key string) (value Value, ok bool)  {
 
 //进行缓存淘汰
 func (c *Cache)Eliminate()  {
+	//把队首的节点掏出来
 	ele:=c.lruList.Back()
 	if ele!=nil {
 		kv := ele.Value.(*item)

@@ -7,8 +7,7 @@ type ByteView struct {
 	b []byte
 }
 
-
-//返回当前缓存的字节数
+//返回当前缓存元素的字节数
 func (v ByteView)Len() int{
 	return len(v.b)
 }
@@ -18,7 +17,7 @@ func (v ByteView)ToString() string{
 	return string(v.b)
 }
 
-//返回实际存放数据的切片
+//返回实际存放数据的切片(深拷贝)
 func (v ByteView)ByteSlice() []byte  {
 	temp:=make([]byte,len(v.b))
 	copy(temp,v.b)

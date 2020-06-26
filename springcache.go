@@ -20,6 +20,7 @@ func (f GetterFunc) Get(key string) ([]byte, error) {
 }
 
 // Group 可以认为是一个缓存的命名空间
+//并拥有了数据未命中时的回调函数getter
 type Group struct {
 	name string
 	getter Getter
@@ -52,6 +53,8 @@ func GetGroup(name string) *Group{
 	return groups[name]
 }
 
+
+//封装了并发get的调用、缓存未命中的逻辑
 func (g *Group)Get(key string) (ByteView,error){
 	if key=="" {
 		return ByteView{},errors.New("the key is empty")

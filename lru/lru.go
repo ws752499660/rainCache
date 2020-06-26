@@ -85,9 +85,7 @@ func (c *Cache)Eliminate()  {
 		kv := ele.Value.(*item)
 		c.lruList.Remove(ele)
 		delete(c.cache, kv.key)
-
 		c.usedBytes = c.usedBytes - int64(kv.value.Len()+len(kv.key))
-		c.lruList.Remove(ele)
 		if c.onEvicted!=nil{
 			c.onEvicted(kv.key,kv.value)
 		}

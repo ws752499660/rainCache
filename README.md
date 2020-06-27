@@ -16,10 +16,8 @@
 
 * lru.Value(接口，需要实现len())：缓存中存放数据的类型
 * lru.item：封装了string类型的key和实现Value接口的value，以一个整体放入lru双向链表的list.Element中
-
 * ByteView：单个缓存元素内容存放的结构
-
-
+* cache：支持并发的封装了lru缓存的缓存
 
 ## 缓存实现lru
 
@@ -292,3 +290,6 @@ type HTTPPool struct {
 * 工厂函数（NewHTTPPool）
 * 日志打印方法（Log）
 * 请求承接方法，通过url中传入的参数返回对应的缓存数据（ServeHTTP）
+
+## 一致性哈希
+
